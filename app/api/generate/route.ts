@@ -1,13 +1,19 @@
 import { NextRequest } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 import { getAdminAuth, getAdminDb } from '@/lib/firebaseAdmin'
 import { FREE_PROPOSAL_LIMIT } from '@/types'
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || 'placeholder' })
+export const dynamic = 'force-dynamic'
+
+function getGenAI() {
+  const key = process.env.GEMINI_API_KEY
+  if (!key) throw new Error('GEMINI_API_KEY is not set')
+  return new GoogleGenerativeAI(key)
+}
 
 function buildPrompt(platform: string, tone: string, jobDesc: string, skills: string): string {
   const platformLabel: Record<string, string> = {
-    lancers: 'ランサーズ', coconala: 'コンコナラ', crowdworks: 'クラウドワークス',
+    lancers: 'ランサーズ', coconala: 'ココナラ', crowdworks: 'クラウドワークス',
     direct: '直案件', other: 'フリーランスサイト',
   }
   const toneGuide: Record<string, string> = {
@@ -65,19 +71,16 @@ export async function POST(req: NextRequest) {
   const { platform, tone, jobDesc, skills } = await req.json()
   if (!jobDesc?.trim()) return Response.json({ error: '案件情報を入力してください' }, { status: 400 })
 
-  const stream = client.messages.stream({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 800,
-    messages: [{ role: 'user', content: buildPrompt(platform, tone, jobDesc, skills ?? '') }],
-  })
+  const genAI = getGenAI()
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+  const result = await model.generateContentStream(buildPrompt(platform, tone, jobDesc, skills ?? ''))
 
   const encoder = new TextEncoder()
   const readable = new ReadableStream({
     async start(controller) {
-      for await (const event of stream) {
-        if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
-          controller.enqueue(encoder.encode(event.delta.text))
-        }
+      for await (const chunk of result.stream) {
+        const text = chunk.text()
+        if (text) controller.enqueue(encoder.encode(text))
       }
       controller.close()
     },
