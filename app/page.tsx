@@ -278,6 +278,7 @@ export default function LandingPage() {
             <a href="https://x.com/Yoko_ai_dev" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#555', textDecoration: 'none' }}>X (Twitter)</a>
             <a href="https://note.com/yoko_ai_logic" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#555', textDecoration: 'none' }}>note</a>
             <a href="https://www.instagram.com/yoncornrow/" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#555', textDecoration: 'none' }}>Instagram</a>
+            <a href="https://buildflow-ai-six.vercel.app" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#555', textDecoration: 'none' }}>BuildFlow AI</a>
             <a href="https://yokoportofolio.vercel.app" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#555', textDecoration: 'none' }}>Portfolio</a>
           </div>
           <p style={{ fontSize: 12, color: '#333', margin: 0 }}>© 2026 YO-KO — Built with Claude Code</p>
