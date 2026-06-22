@@ -39,6 +39,11 @@ export default function KanbanColumn({ columnId, label, color, projects, onEdit 
               transition: 'all 0.15s',
             }}
           >
+            {projects.length === 0 && !snapshot.isDraggingOver && (
+              <div style={{ padding: '16px 8px', textAlign: 'center', color: '#444', fontSize: 11 }}>
+                ここにドロップ
+              </div>
+            )}
             {projects.map((p, i) => (
               <ProjectCard key={p.id} project={p} index={i} onEdit={onEdit} />
             ))}

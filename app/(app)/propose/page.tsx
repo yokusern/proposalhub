@@ -23,6 +23,7 @@ export default function ProposePage() {
   const [generating, setGenerating] = useState(false)
   const [saved, setSaved] = useState(false)
   const [err, setErr] = useState('')
+  const [copied, setCopied] = useState(false)
   const resultRef = useRef<HTMLDivElement>(null)
 
   const generate = async () => {
@@ -65,7 +66,11 @@ export default function ProposePage() {
     setTimeout(() => router.push('/dashboard'), 1200)
   }
 
-  const copy = () => { navigator.clipboard.writeText(result); alert('コピーしました') }
+  const copy = () => {
+    navigator.clipboard.writeText(result)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
     <div style={{ maxWidth: 800 }}>
@@ -122,8 +127,8 @@ export default function ProposePage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: '#888' }}>生成結果</span>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={copy} style={{ fontSize: 12, padding: '6px 14px', background: '#2a2a2a', border: '1px solid #333', borderRadius: 6, color: '#aaa', cursor: 'pointer' }}>
-                コピー
+              <button onClick={copy} style={{ fontSize: 12, padding: '6px 14px', background: copied ? 'rgba(74,222,128,0.1)' : '#2a2a2a', border: `1px solid ${copied ? '#4ade80' : '#333'}`, borderRadius: 6, color: copied ? '#4ade80' : '#aaa', cursor: 'pointer', transition: 'all 0.2s' }}>
+                {copied ? '✓ コピー済み' : 'コピー'}
               </button>
               {!generating && (
                 <button onClick={saveAndRegister} disabled={saved} style={{ fontSize: 12, padding: '6px 14px', background: saved ? '#1a3a1a' : 'rgba(249,115,22,0.15)', border: `1px solid ${saved ? '#4ade80' : '#f97316'}`, borderRadius: 6, color: saved ? '#4ade80' : '#f97316', cursor: saved ? 'default' : 'pointer', fontWeight: 700 }}>
